@@ -634,8 +634,30 @@ def load_vectorstore_from_sqlite(db_name="./DataStore/vectorstore.db"):
     except Exception as e:
         print(f"Error loading vector store: {e}")
         return None
+def delete_all_files_in_folder(folder_path):
+    """Deletes all files in the specified folder."""
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        try:
+            if os.path.isdir(file_path):
+                shutil.rmtree(file_path)  # Delete directory and its contents
+            else:
+                os.remove(file_path)  # Delete file
+        except Exception as e:
+            print(f"Error deleting {file_path}: {e}")
 
 def main():
+
+    # Prompt user to reset lessons
+    user_input = input("Do you want to reindex and reset all lessons? (yes/no): ").strip().lower()
+
+    if user_input == "yes":
+        print("Resetting and reindexing all lessons...")
+        # Delete all files in the ./DataStore/ folder
+        delete_all_files_in_folder("./DataStore/")
+    else:
+        print("Proceeding without resetting lessons.")
+        
     # Initialize database for training plan (already done in your code)
     create_database()
 
