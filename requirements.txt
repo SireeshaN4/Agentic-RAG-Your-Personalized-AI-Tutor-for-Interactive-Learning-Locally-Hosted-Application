@@ -1,0 +1,10 @@
+os  # Standard library for interacting with the operating system
+pickle  # Standard library for serializing and deserializing Python objects
+sqlite3  # Standard library for SQLite database operations
+requests  # For making HTTP requests
+numpy  # For numerical operations and handling arrays
+langchain_community  # For vector store and document loaders
+sentence_transformers  # For embedding models
+langchain  # For text splitting and prompt templates
+json  # Standard library for JSON operations
+re  # Standard library for regular expressions
