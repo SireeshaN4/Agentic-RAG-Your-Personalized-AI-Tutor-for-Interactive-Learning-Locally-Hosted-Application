@@ -1,4 +1,4 @@
-# RAG Application
+# Agentic RAG: Your Personalized AI Tutor for Interactive Learning Application
 
 This repository contains a Agentic Retrieval-Augmented Generation (RAG) application that uses various machine learning models and databases to create and manage a training plan for students.
 
