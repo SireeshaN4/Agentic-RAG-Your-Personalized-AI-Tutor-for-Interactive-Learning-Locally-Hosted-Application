@@ -2,12 +2,80 @@
 
 This repository contains a Agentic Retrieval-Augmented Generation (RAG) application that uses various machine learning models and databases to create and manage a training plan for students.
 
-## Features
+# Features
 
-- Custom embedding class using SentenceTransformer
-- SQLite database for storing training plans and progress
-- Vector store creation and retrieval using SKLearnVectorStore
-- Integration with ChatOllama for generating lesson explanations and grading
+# Tutor and Reviewer Language Models
+
+This project leverages two distinct language models (LLMs) to create an interactive and effective learning system. The two models, `tutor_llm` and `reviewer_llm`, serve different but complementary roles: one focuses on content generation and tutoring, while the other is responsible for evaluation and feedback.
+
+## `tutor_llm` (Content Generation)
+`Tutor_llm` is primarily used for **content generation** and assisting in the tutoring process. Its main tasks include:
+
+### Responsibilities:
+1. **Generating Lesson Content**:  
+   - It generates lesson materials based on a provided prompt. The lesson can include text, examples, and explanations.
+   - Example usage: `self.run_tutor(next_lesson)` calls `tutor_llm` to generate the lesson content for a given lesson.
+
+2. **Answering Student Questions**:  
+   - `tutor_llm` is used to answer any follow-up questions from the student, providing detailed explanations based on the lesson.
+   - Example usage: In `generate_answer_for_question`, the lesson context and the student's question are provided to `tutor_llm` to return an informative answer.
+
+3. **Creating Dynamic Test Questions**:  
+   - It generates test questions based on the lesson content. These can be single-line questions, multiple-choice questions, or open-ended questions.
+   - Example usage: `generate_dynamic_questions` uses `tutor_llm` to generate a set of test questions from the lesson content.
+
+### Summary of `tutor_llm`:
+- **Purpose**: Content generation (lesson material, questions, answers, etc.).
+- **Tasks**:  
+  - Generates lesson content  
+  - Answers student questions  
+  - Creates test questions
+
+---
+
+## `reviewer_llm` (Evaluation and Feedback)
+`Reviewer_llm` is focused on **evaluation** and **feedback**. It evaluates the student's performance and provides suggestions for improving lessons or responses. It operates in a more "evaluative" capacity compared to `tutor_llm`.
+
+### Responsibilities:
+1. **Grading Student Answers**:  
+   - `reviewer_llm` is used to grade the student's answers to questions, providing feedback on the quality of their response.
+   - Example usage: In `grade_student_answer`, the student's answer is passed to `reviewer_llm`, which returns a grade or feedback (e.g., "Excellent," "Needs Improvement").
+
+2. **Providing Feedback for Retrying Lessons**:  
+   - After reviewing the student's performance, `reviewer_llm` suggests improvements or modifications to the lesson to help the student understand better.
+   - Example usage: In `ask_for_retry_or_improvement`, the feedback from `reviewer_llm` is used to ask the student if they'd like to retry the lesson with suggestions.
+
+3. **Improving Lessons Based on Performance**:  
+   - `reviewer_llm` suggests how a lesson can be improved based on the student's performance or the interaction history.
+   - Example usage: In `modify_lesson_for_retry`, the feedback from `reviewer_llm` is used to adjust the lesson for the student’s retry.
+
+### Summary of `reviewer_llm`:
+- **Purpose**: Evaluation and feedback (grading, suggesting improvements).
+- **Tasks**:  
+  - Grading student answers  
+  - Providing suggestions for lesson modifications  
+  - Improving learning methods
+
+---
+
+## Relationship Between `tutor_llm` and `reviewer_llm`
+- **`tutor_llm`** is the "teacher" or "content generator" that delivers the lesson and answers student questions.
+- **`reviewer_llm`** is the "evaluator" that checks the student’s performance, grades their answers, and provides suggestions for improving lessons or responses.
+
+### Workflow:
+1. **Lesson Generation**:  
+   - `tutor_llm` generates the lesson content.
+2. **Student Interaction**:  
+   - The student interacts with the content and answers questions.
+3. **Answer Evaluation**:  
+   - `reviewer_llm` evaluates the student's answer and provides feedback.
+4. **Lesson Improvement**:  
+   - If the student requests a retry, `reviewer_llm` provides suggestions for improving the lesson.
+5. **Follow-Up**:  
+   - If the student has further questions, `tutor_llm` answers them.
+
+By separating these responsibilities, the system ensures that content delivery (from `tutor_llm`) and evaluation/feedback (from `reviewer_llm`) are specialized and optimized, providing an effective learning experience.
+
 
 ## Setup
 
