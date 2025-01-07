@@ -183,7 +183,7 @@ def save_vectorstore_to_file(retriever, filename="./DataStore/vectorstore.pkl"):
         with open(filename, 'wb') as f:
             pickle.dump((documents, embeddings, metadatas), f)
         
-        print(f"Vector store saved to {filename}.")
+        print(f"[TUTOR] Vector store saved to {filename}.")
     except Exception as e:
         print(f"Error saving vector store: {e}")
 
@@ -203,7 +203,7 @@ def load_vectorstore_from_file(filename="./DataStore/vectorstore.pkl"):
                 metadatas=metadatas
             )
             
-            print(f"Vector store loaded from {filename}.")
+            print(f"[TUTOR] Vector store loaded from {filename}.")
             return retriever
         except Exception as e:
             print(f"Error loading vector store: {e}")
@@ -818,20 +818,20 @@ def delete_all_files_in_folder(folder_path):
 def main():
 
     # Prompt user to reset lessons
-    user_input = input("Do you want to reindex and reset all lessons? (yes/no): ").strip().lower()
+    user_input = input("[TUTOR] Do you want to reindex and reset all lessons? (yes/no): ").strip().lower()
 
     if user_input == "yes":
         print("Resetting and reindexing all lessons...")
         # Delete all files in the ./DataStore/ folder
         delete_all_files_in_folder("./DataStore/")
     else:
-        print("Proceeding without resetting lessons.")
+        print("[TUTOR] Proceeding without resetting lessons.")
         
     # Initialize database for training plan (already done in your code)
     create_database()
 
     # Try loading the vector store from SQLite
-    print("Attempting to load vector store from SQLite...")
+    print("[TUTOR] Attempting to load vector store from SQLite...")
     retriever = load_vectorstore_from_sqlite("./DataStore/vectorstore.db")
     
     if retriever is None:
@@ -840,28 +840,28 @@ def main():
         retriever = create_and_save_vectorstore()
 
     # Initialize RAG application
-    print("Initializing RAG application...")
+    print("[TUTOR] Initializing RAG application...")
     app = RAGApplication(retriever)
 
     # Fetch last completed lesson
-    print("Fetching last completed lesson...")
+    print("[TUTOR] Fetching last completed lesson...")
     last_lesson = get_last_completed_lesson()
-    print(f"Last completed lesson: {last_lesson}")
+    print(f"[TUTOR] Last completed lesson: {last_lesson}")
 
     if last_lesson is None:
-        print("No completed lessons found. Initializing the training plan...")
+        print("[TUTOR] No completed lessons found. Initializing the training plan...")
         # If no lessons have been completed, create and store a new training plan
         plan = app.create_training_plan()  # Generate a new plan using the reviewer LLM
 
-    print("Fetching next lesson...")
+    print("[TUTOR] Fetching next lesson...")
     next_lesson = get_next_lesson(last_lesson)
 
     if next_lesson:
-        print(f"Next lesson: {next_lesson}")
+        print(f"[TUTOR] Next lesson: \n {next_lesson}")
         # Assume student's answer is retrieved or generated
-        print("Running tutor to generate lesson contents...")
+        print("[TUTOR] Running tutor to generate lesson contents...\n \n")
         student_answer = app.run_tutor(next_lesson)
-        print(f"Lesson completed: {next_lesson}")
+        print(f"[TUTOR] Lesson completed: {next_lesson}")
 
 
         # You could update progress and adjust plan based on grade here
