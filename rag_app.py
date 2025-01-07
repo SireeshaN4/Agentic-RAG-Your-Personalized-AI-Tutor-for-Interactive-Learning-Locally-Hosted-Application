@@ -381,7 +381,7 @@ class RAGApplication:
         Generate dynamic questions based on the lesson content using the LLM.
         """
         prompt = f"""
-        Based on the following lesson content, generate 3-5 single line questions that can be used to test the student's understanding of the material. If the question is multiple choice, provide options like a), b), c), etc. If the question is open-ended, just provide the question text.
+        Based on the following lesson content, generate 3-5 single line questions that can be used to test the student's understanding of the material.  If the question is open-ended, just provide the question text.
 
         Lesson Title: {lesson_title}
 
@@ -539,6 +539,174 @@ class RAGApplication:
         else:
             print("Sorry, I couldn't generate any test questions. Please try again later.")
 
+    def retrieve_content_from_vectorstore(self):
+        """Retrieve documents from vectorstore based on a query"""
+        conn = sqlite3.connect('./DataStore/vectorstore.db')
+        c = conn.cursor()
+
+        # You may want to change the query condition to a better one depending on the use case
+        c.execute("SELECT document FROM vectorstore")
+        rows = c.fetchall()
+        conn.close()
+
+        if not rows:
+            print("No documents found in vectorstore for query:")
+        else:
+            print("Documents fetched:", rows)
+
+        # Aggregate documents into a single string (or you can process them differently based on your needs)
+        documents = "\n".join([row[0] for row in rows])
+        return documents
+
+
+    def create_training_plan(self):
+        """Generate a training plan based on documents in vectorstore and progress in training_plan db"""
+        
+        # 1. Fetch lessons and their statuses from the training_plan table
+        conn = sqlite3.connect('./DataStore/training_plan.db')
+        c = conn.cursor()
+
+        c.execute('''SELECT training_plan.id, training_plan.lesson, training_plan.date, training_plan.status 
+                    FROM training_plan 
+                    ORDER BY training_plan.id ASC''')
+        lessons = c.fetchall()
+        conn.close()
+
+        # 3. Now, retrieve related documents from the vector store for context
+        documents = self.retrieve_content_from_vectorstore()
+
+        print("Documents fetched from vectorstore.db:", documents)
+
+        prompt_message = f"""
+        Given the content below, generate a structured list with the following format:
+        - Each section should have a title (e.g., **Introduction**). Followed by the keywords in the section
+        - DO this for whole content and give them as a list
+
+        Here is the content to generate from:
+
+        {documents}
+        """
+
+        # print ("Prompt message: ", prompt_message)
+
+        print ("Calling Plan Agent to create training plan")
+
+        # 5. Generate a training plan using the LLM
+        new_plan_message = self.plan_llm.invoke(prompt_message)
+        
+        # Check if the response is a StringPromptValue or the actual content
+        # Check if the returned result is a string directly
+        if isinstance(new_plan_message, str):
+            new_plan_message = new_plan_message  # Just assign it as a string
+        else:
+            # In case the result is some other object (although it should be a string)
+            new_plan_message = str(new_plan_message)
+    
+
+
+        # 6. Process the LLM response and create the new structured plan
+        try:
+            # This is where we parse the new plan response using the previously discussed logic
+            new_plan = self.process_new_plan(new_plan_message)
+
+            # print("Debugging - plan_message:", new_plan)
+
+            
+            # Optionally store the response to a debug file
+            with open("./DataStore/debug_training_plan.json", "w") as f:
+                json.dump(new_plan, f, indent=2)
+        
+        except Exception as e:
+            print(f"Error parsing the plan: {e}")
+            new_plan = {}
+
+        # Store the new plan in the training database
+        self.store_training_plan(new_plan)
+
+        # 7. Return the new plan
+        return new_plan
+
+
+
+    def process_new_plan(self, new_plan_message):
+        """Helper function to process the LLM response and create a structured training plan"""
+        
+        try:
+            # Regex to capture everything starting from a bold title (e.g., **Introduction**) to the next bold title or end of content.
+            sections = re.findall(r'(\*\*.*?\*\*.*?)(?=\*\*|$)', new_plan_message, re.DOTALL)
+
+            # Check if sections were found
+            if sections:
+                # Dynamically create the lesson info with all extracted sections
+                lesson_info = {
+                    "lesson": {}
+                }
+                # Assign each extracted section (title + content) to a key in the "lesson" dictionary
+                for idx, section in enumerate(sections, start=1):
+                    lesson_info["lesson"][f"title{idx}"] = section.strip()
+            else:
+                # In case no sections are found, return a default structure
+                lesson_info = {
+                    "lesson": {
+                        "title1": "No sections found"
+                    }
+                }
+
+            return lesson_info  # Return the structured plan
+
+        except Exception as e:
+            print(f"Error processing the new plan: {e}")
+            return {}
+
+    def store_training_plan(self, plan):
+        """Store the generated training plan in the training_plan database"""
+        conn = sqlite3.connect('./DataStore/training_plan.db')
+        c = conn.cursor()
+
+        # Assuming 'plan' is a dictionary with a "lesson" key containing another dictionary of titles
+        if "lesson" in plan:
+            lessons = plan["lesson"]
+
+            # Iterate through the lessons
+            for title, content in lessons.items():
+                # First check if the lesson already exists in the database
+                c.execute("SELECT COUNT(*) FROM training_plan WHERE lesson = ?", (title,))
+                result = c.fetchone()
+
+                if result[0] > 0:
+                    # Update the lesson if it exists
+                    c.execute("""
+                        UPDATE training_plan
+                        SET lesson = ?
+                        WHERE lesson = ?
+                    """, (content, title))  # Update the content for the specific title
+                    print(f"Lesson '{title}' updated.")
+                else:
+                    # If the lesson doesn't exist, insert a new row
+                    c.execute("""
+                        INSERT INTO training_plan (lesson, date, status)
+                        VALUES (?, '2025-01-01', 'N/A')
+                    """, (content,))
+                    print(f"Lesson '{title}' inserted.")
+
+            # Commit changes to the database
+            conn.commit()
+
+            # Debugging: Fetch and print the contents of the table after the update/insert
+            print("\nContents of the training_plan table after changes:")
+            c.execute("SELECT * FROM training_plan")
+            rows = c.fetchall()
+
+            # Print all the rows in the training_plan table
+            for row in rows:
+                print(row)
+
+            # Close the connection
+            conn.close()
+            print(f"\nTraining plan with {len(lessons)} lessons processed.")
+        else:
+            print("No lessons found in the provided plan.")
+
 
 
 def update_lesson_status_to_completed(lesson_name):
@@ -586,6 +754,7 @@ def save_vectorstore_to_sqlite(retriever, db_name="./DataStore/vectorstore.db"):
         print(f"Vector store saved to {db_name}.")
     except Exception as e:
         print(f"Error saving vector store: {e}")
+
 
 # Embedding class from your previous code
 # Embedding class from your previous code
@@ -679,10 +848,10 @@ def main():
     last_lesson = get_last_completed_lesson()
     print(f"Last completed lesson: {last_lesson}")
 
-    # if last_lesson is None:
-        # print("No completed lessons found. Initializing the training plan...")
+    if last_lesson is None:
+        print("No completed lessons found. Initializing the training plan...")
         # If no lessons have been completed, create and store a new training plan
-        # plan = app.create_training_plan()  # Generate a new plan using the reviewer LLM
+        plan = app.create_training_plan()  # Generate a new plan using the reviewer LLM
 
     print("Fetching next lesson...")
     next_lesson = get_next_lesson(last_lesson)

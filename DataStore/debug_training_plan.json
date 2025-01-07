@@ -1,0 +1,31 @@
+{
+  "lesson": {
+    "title1": "**Introduction**\\n-",
+    "title2": "**The Solar System**: The Sun, planets, satellites, stars, and galaxies that make up our solar system.\\n-",
+    "title3": "**Key Concepts**: Understanding the structure of the solar system, celestial bodies, and their relationships.\\n\\n",
+    "title4": "**Solar System**\\n-",
+    "title5": "**Planets**: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune\\n-",
+    "title6": "**Satellites**: Moon, asteroids, comets, and other smaller objects that orbit planets.\\n-",
+    "title7": "**Stars**: The massive balls of hot, glowing gas that light up the universe.\\n-",
+    "title8": "**Galaxies**: Massive collections of stars, stellar remnants, interstellar gas, dust, and dark matter.\\n\\n",
+    "title9": "**The Sun**\\n-",
+    "title10": "**Composition**: Hydrogen and helium gases make up the majority of the Sun's mass.\\n-",
+    "title11": "**Size**: The Sun is approximately 109 times larger in diameter than Earth.\\n-",
+    "title12": "**Temperature**: The surface temperature of the Sun is about 5,500\u00b0C (10,000\u00b0F).\\n\\n",
+    "title13": "**Stars**\\n-",
+    "title14": "**Types**: Main Sequence stars, Red Giants, White Dwarfs, Neutron Stars, and Black Holes.\\n-",
+    "title15": "**Life Cycle**: Stars go through various stages of evolution, from protostar to main sequence.\\n\\n",
+    "title16": "**The Moon**\\n-",
+    "title17": "**Composition**: Rock and metal, with a small amount of silicate minerals.\\n-",
+    "title18": "**Size**: The Moon is about one-quarter the size of Earth.\\n-",
+    "title19": "**Orbit**: The Moon orbits Earth in approximately 27.3 days.\\n\\n",
+    "title20": "**Why Can't We See the Moon and Stars During the Day?**\\n-",
+    "title21": "**Light Reflection**: The Moon reflects sunlight, making it visible during the day.\\n-",
+    "title22": "**Atmospheric Interference**: The Earth's atmosphere scatters and absorbs some of the Sun's light, reducing visibility.\\n-",
+    "title23": "**Obstructions**: Objects on or near the Earth can block our view of the sky.\\n\\n",
+    "title24": "**Picture Study**\\n-",
+    "title25": "**Name of Heavenly Body**: The Moon\\n-",
+    "title26": "**No One Can Live on This Heavenly Body**: Due to lack of air and water, making it uninhabitable for humans.\\n-",
+    "title27": "**Do and Learn**: Observe the shape of the Moon by drawing and writing about its changes over time.\" additional_kwargs={} response_metadata={'model': 'llama3.2:1b', 'created_at': '2025-01-07T13:27:40.443639542Z', 'done': True, 'done_reason': 'stop', 'total_duration': 114278592567, 'load_duration': 23952779, 'prompt_eval_count': 1956, 'prompt_eval_duration': 46556000000, 'eval_count': 451, 'eval_duration': 67696000000, 'message': Message(role='assistant', content='', images=None, tool_calls=None)} id='run-00203193-a14c-422a-85d8-f985438dcbbd-0' usage_metadata={'input_tokens': 1956, 'output_tokens': 451, 'total_tokens': 2407}"
+  }
+}
