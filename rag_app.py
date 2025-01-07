@@ -466,11 +466,11 @@ class RAGApplication:
             print(f"Error generating answer for the question: {e}")
             return "Sorry, I couldn't generate an answer at this time."
 
-    def grade_student_answer(self, student_answer):
+    def grade_student_answer(self, question, student_answer):
         """
         Grade the student's answer based on the reviewer LLM.
         """
-        prompt_message = self.reviewer_prompt.format(student_answer=student_answer)
+        prompt_message = f"Evaluate \"{student_answer}\" for the question: {question} and give marks out of 10."
         try:
             
             grade = self.reviewer_llm.invoke(prompt_message)
@@ -527,7 +527,7 @@ class RAGApplication:
                 if user_answer.lower() != "skip":
                     # print(f"Your answer: {user_answer}")
                     # Generate the correct answer for the question
-                    grade = self.grade_student_answer(user_answer)
+                    grade = self.grade_student_answer(question, user_answer)
                     print(f"Your grade for this answer: {grade}")
                     correct_answer = self.generate_answer_for_question("Lesson Title", documents, question)
                     print(f"Correct answer: {correct_answer}")                  
