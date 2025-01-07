@@ -359,7 +359,7 @@ class RAGApplication:
             print(f"Reviewer's suggestion: {reviewer_response.content}")
             
             # If the student agrees to retry, provide feedback to Tutor LLM
-            retry_decision = input("Would you like to try this lesson again in a different way? (yes/no): ").strip().lower()
+            retry_decision = input("\n \n[REVIEWER] Would you like to try this lesson again in a different way? (yes/no): ").strip().lower()
             if retry_decision == "yes":
                 self.modify_lesson_for_retry(reviewer_response.content)
                 print("Retrying the lesson with modifications...")
