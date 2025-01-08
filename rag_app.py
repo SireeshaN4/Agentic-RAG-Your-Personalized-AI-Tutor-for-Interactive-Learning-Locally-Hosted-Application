@@ -480,40 +480,40 @@ class RAGApplication:
             print(f"Error grading the student's answer: {e}")
             return "Error in grading."
 
-    def handle_follow_up_questions(self):
-        """Handle the follow-up questions from the user."""
-        follow_up_question = input("Do you have any follow-up questions about this lesson? (yes/no): ").strip().lower()
+    # def handle_follow_up_questions(self):
+    #     """Handle the follow-up questions from the user."""
+    #     follow_up_question = input("Do you have any follow-up questions about this lesson? (yes/no): ").strip().lower()
 
-        if follow_up_question == "yes":
-            while True:
-                user_question = input("Ask your question or type exit: ").strip()
-                if user_question.lower() == "exit":
-                    print("Goodbye!")
-                    break
+    #     if follow_up_question == "yes":
+    #         while True:
+    #             user_question = input("Ask your question or type exit: ").strip()
+    #             if user_question.lower() == "exit":
+    #                 print("Goodbye!")
+    #                 break
 
-                # Include the previous context and new user question
-                follow_up_prompt = f"""
-                Previous context:
-                {self.context_history}
+    #             # Include the previous context and new user question
+    #             follow_up_prompt = f"""
+    #             Previous context:
+    #             {self.context_history}
 
-                New question: {user_question}
+    #             New question: {user_question}
 
-                Answer the new question based on the previous context and lesson.
-                """
+    #             Answer the new question based on the previous context and lesson.
+    #             """
 
-                # Call the tutor model with the updated prompt
-                try:
-                    tutor_follow_up_answer = self.tutor_llm.invoke(follow_up_prompt)
-                    tutor_follow_up_response = tutor_follow_up_answer.content
-                    print(f"Tutor's response: {tutor_follow_up_response}")
+    #             # Call the tutor model with the updated prompt
+    #             try:
+    #                 tutor_follow_up_answer = self.tutor_llm.invoke(follow_up_prompt)
+    #                 tutor_follow_up_response = tutor_follow_up_answer.content
+    #                 print(f"Tutor's response: {tutor_follow_up_response}")
                     
-                    # Update the context for the next question
-                    self.context_history += f"\nFollow-up Question: {user_question}\nAnswer: {tutor_follow_up_response}"
+    #                 # Update the context for the next question
+    #                 self.context_history += f"\nFollow-up Question: {user_question}\nAnswer: {tutor_follow_up_response}"
 
-                except Exception as e:
-                    print(f"Error generating follow-up answer: {e}")
-        else:
-            print("If you have any more questions later, feel free to ask!")
+    #             except Exception as e:
+    #                 print(f"Error generating follow-up answer: {e}")
+    #     else:
+    #         print("If you have any more questions later, feel free to ask!")
 
     def test_user_understanding(self, documents):
         """Test the user's understanding by generating dynamic questions and grading the answers."""
