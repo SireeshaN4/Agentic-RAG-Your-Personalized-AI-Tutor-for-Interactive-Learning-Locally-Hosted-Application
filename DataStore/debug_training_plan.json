@@ -26,6 +26,6 @@
     "title24": "**Picture Study**\\n-",
     "title25": "**Name of Heavenly Body**: The Moon\\n-",
     "title26": "**No One Can Live on This Heavenly Body**: Due to lack of air and water, making it uninhabitable for humans.\\n-",
-    "title27": "**Do and Learn**: Observe the shape of the Moon by drawing and writing about its changes over time.\" additional_kwargs={} response_metadata={'model': 'llama3.2:1b', 'created_at': '2025-01-07T13:46:53.252462186Z', 'done': True, 'done_reason': 'stop', 'total_duration': 117194993958, 'load_duration': 32958377, 'prompt_eval_count': 1956, 'prompt_eval_duration': 42835000000, 'eval_count': 451, 'eval_duration': 74323000000, 'message': Message(role='assistant', content='', images=None, tool_calls=None)} id='run-285fc844-9eb4-477c-8c1c-8466e3dd33d9-0' usage_metadata={'input_tokens': 1956, 'output_tokens': 451, 'total_tokens': 2407}"
+    "title27": "**Do and Learn**: Observe the shape of the Moon by drawing and writing about its changes over time.\" additional_kwargs={} response_metadata={'model': 'llama3.2:1b', 'created_at': '2025-01-08T14:15:59.791446646Z', 'done': True, 'done_reason': 'stop', 'total_duration': 106541097737, 'load_duration': 22099544, 'prompt_eval_count': 1956, 'prompt_eval_duration': 40631000000, 'eval_count': 451, 'eval_duration': 65886000000, 'message': Message(role='assistant', content='', images=None, tool_calls=None)} id='run-f7a5d4ec-499e-4861-9e0c-edadaf858e63-0' usage_metadata={'input_tokens': 1956, 'output_tokens': 451, 'total_tokens': 2407}"
   }
 }

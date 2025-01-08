@@ -13,6 +13,7 @@ from langchain.prompts import PromptTemplate
 from langchain_ollama.chat_models import ChatOllama
 from langchain.embeddings.base import Embeddings
 import json
+import sys
 import re
 
 
@@ -82,7 +83,10 @@ def get_next_lesson(last_lesson):
     
     if last_lesson is None:
         # If no lesson has been completed, start from the first lesson
+        # Fetch the first lesson when no previous lesson exists
+        print("[DEBUG] No previous lesson found, fetching first lesson...")
         c.execute('SELECT lesson FROM training_plan ORDER BY id ASC LIMIT 1')
+        print("[DEBUG] SQL query executed: SELECT lesson FROM training_plan ORDER BY id ASC LIMIT 1")
     else:
         # Fetch the next lesson based on the current last completed lesson
         c.execute('''SELECT lesson FROM training_plan
@@ -91,6 +95,9 @@ def get_next_lesson(last_lesson):
                      LIMIT 1''', (last_lesson,))
     
     next_lesson = c.fetchone()
+    print ("*******Next lesson: ", next_lesson)
+    print ("*******Next lesson[0]: ", next_lesson[0])
+
     conn.close()
     
     # Return the first lesson if no next lesson is found
@@ -253,16 +260,16 @@ class RAGApplication:
         self.interaction_history = []
 
     def run_tutor(self, lesson_title):
-        plan = get_training_plan()
-        if not plan:
-            print("Training plan is empty. Creating a new training plan...")
-            new_plan = self.create_training_plan()
-            print("New training plan created and stored.")
+        # plan = get_training_plan()
+        # if not plan:
+        #     print("Training plan is empty. Creating a new training plan...")
+        #     new_plan = self.create_training_plan()
+        #     print("New training plan created and stored.")
 
         # Get the lesson content
         documents = self.get_lesson_content(lesson_title)
         if not documents:
-            return "Sorry, I couldn't find any relevant documents for this lesson. Please try again later."
+            return None
 
         # Generate lesson explanation
         tutor_response = self.get_lesson_explanation(lesson_title, documents)
@@ -284,7 +291,7 @@ class RAGApplication:
             search_type = 'similarity'
             docs = self.retriever.search(lesson_title, search_type)
             if not docs:
-                return None
+                raise ValueError("No relevant documents found")
             return "\n".join([doc.page_content for doc in docs])
         except Exception as e:
             print(f"Error retrieving documents: {e}")
@@ -860,14 +867,19 @@ def main():
         print(f"[TUTOR] Next lesson: \n {next_lesson}")
         # Assume student's answer is retrieved or generated
         print("[TUTOR] Running tutor to generate lesson contents...\n \n")
-        student_answer = app.run_tutor(next_lesson)
-        print(f"[TUTOR] Lesson completed: {next_lesson}")
-
-
-        # You could update progress and adjust plan based on grade here
-        update_lesson_status_to_completed(next_lesson)
-    else:
-        print("No more lessons to display.")
+        try:
+            student_answer = app.run_tutor(next_lesson)
+            print ("***Student answer: ", student_answer)
+            if student_answer is not None:
+                print(f"[TUTOR] Lesson completed: {next_lesson}")
+                update_lesson_status_to_completed(next_lesson)
+            else:
+                print("[TUTOR] Lesson failed to complete")
+        except Exception as e:
+            print(f"Error running tutor: {e}")
+            sys.exit(1)
+        else:
+            print("No more lessons to display.")
 
 if __name__ == "__main__":
     main()
